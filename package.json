@@ -1,0 +1,15 @@
+{
+  "name": "weather-dashboard",
+  "version": "1.0.0",
+  "description": "Modern weather dashboard with ShadCN components",
+  "main": "backend_server.py",
+  "scripts": {
+    "start": "uvicorn backend_server:app --host 0.0.0.0 --port 8000",
+    "dev": "uvicorn backend_server:app --reload --host 0.0.0.0 --port 8000",
+    "python-start": "python backend_server.py",
+    "streamlit": "streamlit run streamlit_app.py"
+  },
+  "keywords": ["weather", "dashboard", "fastapi", "shadcn"],
+  "author": "Weather Dashboard",
+  "license": "MIT"
+}

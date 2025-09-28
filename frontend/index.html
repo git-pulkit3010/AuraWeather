@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌤️ Weather Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading animation */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Smooth transitions */
+        * {
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.5);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-400 via-purple-500 to-purple-600 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900">
+    <!-- Background Pattern -->
+    <div class="fixed inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
+
+    <div class="relative min-h-screen p-4">
+        <!-- Header -->
+        <header class="text-center mb-8 animate-fade-in">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-2">
+                🌤️ Weather Dashboard
+            </h1>
+            <p class="text-white/80 text-lg md:text-xl">
+                Get real-time weather alerts and forecasts for any location
+            </p>
+        </header>
+
+        <!-- Main Container -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Tab Navigation -->
+            <div class="glass rounded-xl p-2 mb-6">
+                <nav class="flex flex-wrap gap-2" role="tablist">
+                    <button class="tab-button active flex-1 min-w-0 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm md:text-base"
+                            data-tab="alerts" role="tab" aria-selected="true">
+                        <span class="block md:inline">🚨</span>
+                        <span class="block md:inline md:ml-2">State Alerts</span>
+                    </button>
+                    <button class="tab-button flex-1 min-w-0 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm md:text-base"
+                            data-tab="city" role="tab" aria-selected="false">
+                        <span class="block md:inline">🏙️</span>
+                        <span class="block md:inline md:ml-2">City Search</span>
+                    </button>
+                    <button class="tab-button flex-1 min-w-0 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm md:text-base"
+                            data-tab="coordinates" role="tab" aria-selected="false">
+                        <span class="block md:inline">🎯</span>
+                        <span class="block md:inline md:ml-2">Coordinates</span>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tab-content" class="space-y-6">
+                <!-- State Alerts Tab -->
+                <div class="tab-pane active animate-slide-up" id="alerts-tab" role="tabpanel">
+                    <div class="glass rounded-xl p-6 md:p-8">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">🚨 Weather Alerts by State</h3>
+                            <p class="text-white/80">Monitor severe weather conditions across all 50 US states</p>
+                        </div>
+
+                        <form id="alerts-form" class="space-y-4">
+                            <div>
+                                <label class="block text-white font-medium mb-2" for="state-input">
+                                    State Code (2 letters)
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="state-input" 
+                                    class="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white/40 focus:bg-white/20" 
+                                    placeholder="e.g., CA, NY, FL, TX"
+                                    maxlength="2"
+                                    pattern="[A-Za-z]{2}"
+                                    required
+                                >
+                                <p class="text-white/60 text-sm mt-2">Enter a 2-letter US state code</p>
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                class="w-full py-3 px-6 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            >
+                                <span class="button-text">🚨 Get Weather Alerts</span>
+                                <span class="loading-spinner hidden">
+                                    <svg class="animate-spin h-5 w-5 inline" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Loading...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- City Search Tab -->
+                <div class="tab-pane animate-slide-up hidden" id="city-tab" role="tabpanel">
+                    <div class="glass rounded-xl p-6 md:p-8">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">🏙️ City Weather Search</h3>
+                            <p class="text-white/80">Search weather for any city worldwide with AI-powered location detection</p>
+                        </div>
+
+                        <form id="city-form" class="space-y-4">
+                            <div>
+                                <label class="block text-white font-medium mb-2" for="city-input">
+                                    City Name
+                                </label>
+                                <input 
+                                    type="text" 
+                                    id="city-input" 
+                                    class="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white/40 focus:bg-white/20" 
+                                    placeholder="e.g., New York City, Los Angeles, Tokyo"
+                                    required
+                                >
+                                <p class="text-white/60 text-sm mt-2">Enter any city name worldwide</p>
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                class="w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            >
+                                <span class="button-text">🌍 Get City Forecast</span>
+                                <span class="loading-spinner hidden">
+                                    <svg class="animate-spin h-5 w-5 inline" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Looking up coordinates...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Coordinates Tab -->
+                <div class="tab-pane animate-slide-up hidden" id="coordinates-tab" role="tabpanel">
+                    <div class="glass rounded-xl p-6 md:p-8">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-white mb-2">🎯 Coordinate Forecast</h3>
+                            <p class="text-white/80">Use exact GPS coordinates for precise weather data</p>
+                        </div>
+
+                        <form id="coordinates-form" class="space-y-4">
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-white font-medium mb-2" for="latitude-input">
+                                        Latitude
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="latitude-input" 
+                                        class="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white/40 focus:bg-white/20" 
+                                        placeholder="37.7749"
+                                        step="0.000001"
+                                        min="-90"
+                                        max="90"
+                                        value="37.7749"
+                                        required
+                                    >
+                                </div>
+                                <div>
+                                    <label class="block text-white font-medium mb-2" for="longitude-input">
+                                        Longitude
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="longitude-input" 
+                                        class="w-full px-4 py-3 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:border-white/40 focus:bg-white/20" 
+                                        placeholder="-122.4194"
+                                        step="0.000001"
+                                        min="-180"
+                                        max="180"
+                                        value="-122.4194"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            <p class="text-white/60 text-sm">Latitude: -90 to 90, Longitude: -180 to 180</p>
+
+                            <button 
+                                type="submit" 
+                                class="w-full py-3 px-6 bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            >
+                                <span class="button-text">🌤️ Get Coordinate Forecast</span>
+                                <span class="loading-spinner hidden">
+                                    <svg class="animate-spin h-5 w-5 inline" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Loading forecast...
+                                </span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Container -->
+            <div id="results-container" class="mt-6 space-y-4"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-white/60 mt-12 pb-8">
+            <p class="mb-2">🌤️ Weather data provided by the National Weather Service</p>
+            <p class="mb-2">🤖 City geocoding powered by OpenRouter AI</p>
+            <p class="text-sm">Built with modern web technologies and beautiful design</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
