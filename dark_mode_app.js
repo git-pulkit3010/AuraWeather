@@ -138,14 +138,16 @@ class WeatherDashboard {
     }
 
     switchTab(targetTab, tabButtons, tabPanes) {
-        // Update button states with comprehensive dark mode support
+        // Update button states with enhanced dark mode support
         tabButtons.forEach(btn => {
-            btn.classList.remove('active');
+            btn.classList.remove('active', 'bg-white', 'dark:bg-white/90', 'text-gray-800', 'dark:text-gray-900', 'shadow-lg');
+            btn.classList.add('text-white/70', 'hover:text-white', 'hover:bg-white/10', 'dark:hover:bg-white/5');
             btn.setAttribute('aria-selected', 'false');
         });
 
         const activeButton = document.querySelector(`[data-tab="${targetTab}"]`);
-        activeButton.classList.add('active');
+        activeButton.classList.add('active', 'bg-white', 'dark:bg-white/90', 'text-gray-800', 'dark:text-gray-900', 'shadow-lg');
+        activeButton.classList.remove('text-white/70', 'hover:text-white', 'hover:bg-white/10', 'dark:hover:bg-white/5');
         activeButton.setAttribute('aria-selected', 'true');
 
         // Update tab panes
@@ -305,7 +307,7 @@ class WeatherDashboard {
 
         if (!data.alerts || data.alerts.length === 0) {
             container.innerHTML = `
-                <div class="glass rounded-xl p-6 animate-slide-up shadow-xl">
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up shadow-xl">
                     <div class="text-center">
                         <div class="text-6xl mb-4 animate-pulse-slow">🌤️</div>
                         <h3 class="text-2xl font-bold text-white mb-2">Good News!</h3>
@@ -340,7 +342,7 @@ class WeatherDashboard {
 
         container.innerHTML = `
             <div class="space-y-4">
-                <div class="glass rounded-xl p-6 shadow-xl">
+                <div class="glass dark:glass-dark rounded-xl p-6 shadow-xl">
                     <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                         <h3 class="text-2xl font-bold text-white">⚠️ Active Weather Alerts for ${data.state}</h3>
                         <span class="px-3 py-1 bg-red-500 dark:bg-red-600 text-white text-sm font-semibold rounded-full shadow-md animate-pulse-slow">
@@ -359,7 +361,7 @@ class WeatherDashboard {
 
         if (!data.forecast || data.forecast.length === 0) {
             container.innerHTML = `
-                <div class="glass rounded-xl p-6 animate-slide-up shadow-xl">
+                <div class="glass dark:glass-dark rounded-xl p-6 animate-slide-up shadow-xl">
                     <div class="text-center">
                         <div class="text-6xl mb-4">❌</div>
                         <h3 class="text-2xl font-bold text-white mb-2">Forecast Unavailable</h3>
@@ -396,7 +398,7 @@ class WeatherDashboard {
 
         container.innerHTML = `
             <div class="space-y-4">
-                <div class="glass rounded-xl p-6 shadow-xl">
+                <div class="glass dark:glass-dark rounded-xl p-6 shadow-xl">
                     <div class="mb-4">
                         <h3 class="text-2xl font-bold text-white mb-2">🌤️ Weather Forecast</h3>
                         <p class="text-white/80 flex items-center gap-2">

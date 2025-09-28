@@ -1,15 +1,21 @@
 {
-  "name": "weather-dashboard",
-  "version": "1.0.0",
-  "description": "Modern weather dashboard with ShadCN components",
-  "main": "backend_server.py",
+  "name": "weather-dashboard-dark",
+  "version": "2.0.0",
+  "description": "Modern weather dashboard with dark mode and theme toggle",
+  "main": "run_server.py",
   "scripts": {
-    "start": "uvicorn backend_server:app --host 0.0.0.0 --port 8000",
-    "dev": "uvicorn backend_server:app --reload --host 0.0.0.0 --port 8000",
-    "python-start": "python backend_server.py",
-    "streamlit": "streamlit run streamlit_app.py"
+    "start": "python run_server.py",
+    "dev": "uvicorn run_server:app --reload --host 0.0.0.0 --port 8000",
+    "serve": "python run_server.py"
   },
-  "keywords": ["weather", "dashboard", "fastapi", "shadcn"],
-  "author": "Weather Dashboard",
-  "license": "MIT"
+  "keywords": ["weather", "dashboard", "fastapi", "dark-mode", "theme-toggle"],
+  "author": "Weather Dashboard Team",
+  "license": "MIT",
+  "features": {
+    "dark_mode": true,
+    "theme_toggle": true,
+    "responsive_design": true,
+    "glassmorphism": true,
+    "enhanced_caching": true
+  }
 }
