@@ -1,0 +1,13 @@
+.venv/
+.python-version
+uv.lock
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.tox/
+.eggs/
+dist/
+build/
+*.egg-info/
+</import>
