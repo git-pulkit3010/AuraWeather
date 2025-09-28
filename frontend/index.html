@@ -6,23 +6,58 @@
     <title>🌤️ Weather Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for glassmorphism effect */
+        /* Custom styles for glassmorphism effect with comprehensive dark mode */
         .glass {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        .glass-dark {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Theme-specific glass effects */
+        /* Dark mode glass effects */
         .dark .glass {
             background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Tab button styles for light and dark modes */
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        /* Light mode tab buttons */
+        .tab-button:not(.active) {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tab-button:not(.active):hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Dark mode tab buttons */
+        .dark .tab-button:not(.active) {
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .dark .tab-button:not(.active):hover {
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Active tab button styles */
+        .tab-button.active {
+            background: rgba(255, 255, 255, 0.95);
+            color: rgb(31, 41, 55);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .tab-button.active {
+            background: rgba(255, 255, 255, 0.9);
+            color: rgb(17, 24, 39);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
         }
 
         /* Loading animation */
@@ -83,13 +118,37 @@
             background: rgba(0,0,0,0.5);
         }
 
-        /* Background gradients */
+        /* Enhanced background gradients with better contrast */
         .bg-light-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
         }
 
         .bg-dark-gradient {
             background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d3748 50%, #1a202c 75%, #0f1419 100%);
+        }
+        
+        /* Input field enhancements for dark mode */
+        .input-field {
+            transition: all 0.2s ease-in-out;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        
+        .dark .input-field {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark .input-field:focus {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
         }
     </style>
     <script>
@@ -165,19 +224,19 @@
         <!-- Main Container -->
         <div class="max-w-4xl mx-auto">
             <!-- Tab Navigation -->
-            <div class="glass dark:glass-dark rounded-xl p-2 mb-6 shadow-2xl">
+            <div class="glass rounded-xl p-2 mb-6 shadow-2xl">
                 <nav class="flex flex-wrap gap-2" role="tablist">
-                    <button class="tab-button active flex-1 min-w-0 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm md:text-base"
+                    <button class="tab-button active flex-1 min-w-0 px-4 py-3 rounded-lg font-medium text-sm md:text-base"
                             data-tab="alerts" role="tab" aria-selected="true">
                         <span class="block md:inline">🚨</span>
                         <span class="block md:inline md:ml-2">State Alerts</span>
                     </button>
-                    <button class="tab-button flex-1 min-w-0 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm md:text-base"
+                    <button class="tab-button flex-1 min-w-0 px-4 py-3 rounded-lg font-medium text-sm md:text-base"
                             data-tab="city" role="tab" aria-selected="false">
                         <span class="block md:inline">🏙️</span>
                         <span class="block md:inline md:ml-2">City Search</span>
                     </button>
-                    <button class="tab-button flex-1 min-w-0 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm md:text-base"
+                    <button class="tab-button flex-1 min-w-0 px-4 py-3 rounded-lg font-medium text-sm md:text-base"
                             data-tab="coordinates" role="tab" aria-selected="false">
                         <span class="block md:inline">🎯</span>
                         <span class="block md:inline md:ml-2">Coordinates</span>
@@ -189,7 +248,7 @@
             <div id="tab-content" class="space-y-6">
                 <!-- State Alerts Tab -->
                 <div class="tab-pane active animate-slide-up" id="alerts-tab" role="tabpanel">
-                    <div class="glass dark:glass-dark rounded-xl p-6 md:p-8 shadow-2xl">
+                    <div class="glass rounded-xl p-6 md:p-8 shadow-2xl">
                         <div class="mb-6">
                             <h3 class="text-2xl font-bold text-white mb-2">🚨 Weather Alerts by State</h3>
                             <p class="text-white/80">Monitor severe weather conditions across all 50 US states</p>
@@ -203,7 +262,7 @@
                                 <input 
                                     type="text" 
                                     id="state-input" 
-                                    class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/20 dark:border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-white/40 dark:focus:border-white/30 focus:bg-white/20 dark:focus:bg-black/30" 
+                                    class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-white/60 focus:outline-none" 
                                     placeholder="e.g., CA, NY, FL, TX"
                                     maxlength="2"
                                     pattern="[A-Za-z]{2}"
@@ -231,7 +290,7 @@
 
                 <!-- City Search Tab -->
                 <div class="tab-pane animate-slide-up hidden" id="city-tab" role="tabpanel">
-                    <div class="glass dark:glass-dark rounded-xl p-6 md:p-8 shadow-2xl">
+                    <div class="glass rounded-xl p-6 md:p-8 shadow-2xl">
                         <div class="mb-6">
                             <h3 class="text-2xl font-bold text-white mb-2">🏙️ City Weather Search</h3>
                             <p class="text-white/80">Search weather for any city worldwide with AI-powered location detection</p>
@@ -245,7 +304,7 @@
                                 <input 
                                     type="text" 
                                     id="city-input" 
-                                    class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/20 dark:border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-white/40 dark:focus:border-white/30 focus:bg-white/20 dark:focus:bg-black/30" 
+                                    class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-white/60 focus:outline-none" 
                                     placeholder="e.g., New York City, Los Angeles, Tokyo"
                                     required
                                 >
@@ -271,7 +330,7 @@
 
                 <!-- Coordinates Tab -->
                 <div class="tab-pane animate-slide-up hidden" id="coordinates-tab" role="tabpanel">
-                    <div class="glass dark:glass-dark rounded-xl p-6 md:p-8 shadow-2xl">
+                    <div class="glass rounded-xl p-6 md:p-8 shadow-2xl">
                         <div class="mb-6">
                             <h3 class="text-2xl font-bold text-white mb-2">🎯 Coordinate Forecast</h3>
                             <p class="text-white/80">Use exact GPS coordinates for precise weather data</p>
@@ -286,7 +345,7 @@
                                     <input 
                                         type="number" 
                                         id="latitude-input" 
-                                        class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/20 dark:border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-white/40 dark:focus:border-white/30 focus:bg-white/20 dark:focus:bg-black/30" 
+                                        class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-white/60 focus:outline-none" 
                                         placeholder="37.7749"
                                         step="0.000001"
                                         min="-90"
@@ -302,7 +361,7 @@
                                     <input 
                                         type="number" 
                                         id="longitude-input" 
-                                        class="w-full px-4 py-3 rounded-lg bg-white/10 dark:bg-black/20 backdrop-blur-sm border border-white/20 dark:border-white/10 text-white placeholder-white/60 focus:outline-none focus:border-white/40 dark:focus:border-white/30 focus:bg-white/20 dark:focus:bg-black/30" 
+                                        class="input-field w-full px-4 py-3 rounded-lg text-white placeholder-white/60 focus:outline-none" 
                                         placeholder="-122.4194"
                                         step="0.000001"
                                         min="-180"
