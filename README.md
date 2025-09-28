@@ -36,8 +36,8 @@ Follow these steps to set up and run AuraWeather on your local machine.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
-    cd weather-server
+    git clone https://github.com/git-pulkit3010/AuraWeather.git
+    cd AuraWeather
     ```
 
 2.  **Install Python dependencies:**
@@ -48,7 +48,8 @@ Follow these steps to set up and run AuraWeather on your local machine.
 3.  **Create an environment file:**
     Create a file named `.env` in the root of the project and add your OpenRouter API key:
     ```
-    OPENROUTER_API_KEY="your_openrouter_api_key"
+    OPENROUTER_API_KEY=your_openrouter_api_key
+    OPENROUTER_MODEL=openai/gpt-oss-20b:free
     ```
 
 ### 3. Running the Application
