@@ -32,3 +32,5 @@ Thumbs.db
 
 setup_dark.sh
 setup.sh
+
+start_docker.sh
