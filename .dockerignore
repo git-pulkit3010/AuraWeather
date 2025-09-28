@@ -1,0 +1,54 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Environment files (users need to create their own)
+.env
+.env.local
+.env.example
+
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache
+*.cache
+.pytest_cache/
+
+# Test files (optional - remove this line if you want tests in the container)
+test_*.py
+*_test.py
+
+# Documentation and development files
+README.md
+setup.sh
+setup_dark.sh
+
+# Node modules (if any)
+node_modules/
