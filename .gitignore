@@ -12,3 +12,6 @@ build/
 *.egg-info/
 .env
 </import>
+venv/
+setup.sh
+logs/

@@ -3,9 +3,9 @@
 Interactive test script for the weather MCP server functions.
 This will test the weather functions with user-provided locations.
 """
-
 import asyncio
 import sys
+import os
 
 # Load environment variables from .env file
 try:
@@ -22,16 +22,16 @@ def get_user_input():
     print("=" * 50)
     print("Interactive Weather Information Tool")
     print("=" * 50)
-    
+
     while True:
         print("\nWhat would you like to do?")
         print("1. Get weather alerts for a US state")
         print("2. Get weather forecast for a location (coordinates)")
         print("3. Get weather forecast for a city")
         print("4. Exit")
-        
+
         choice = input("\nEnter your choice (1-4): ").strip()
-        
+
         if choice == "1":
             return "alerts", get_state_input()
         elif choice == "2":
@@ -56,16 +56,16 @@ def get_coordinates_input():
     """Get latitude and longitude from user."""
     print("\nEnter coordinates for the location:")
     print("(You can find coordinates by searching '[City Name] coordinates' on Google)")
-    
+
     while True:
         try:
             lat_input = input("Latitude (e.g., 37.7749): ").strip()
             lon_input = input("Longitude (e.g., -122.4194): ").strip()
-            
+
             latitude = float(lat_input)
             longitude = float(lon_input)
-            
-            # Basic validation for US coordinates
+
+            # Basic validation for coordinates
             if -180 <= longitude <= 180 and -90 <= latitude <= 90:
                 return latitude, longitude
             else:
@@ -75,6 +75,13 @@ def get_coordinates_input():
 
 def get_city_input():
     """Get city name from user."""
+    # Check if OpenRouter API key is available
+    if not os.environ.get("OPENROUTER_API_KEY"):
+        print("\n⚠️ Warning: OPENROUTER_API_KEY environment variable not found.")
+        print("City search functionality requires an OpenRouter API key.")
+        print("Please add OPENROUTER_API_KEY=your_key_here to your .env file.")
+        print("\nYou can still continue, but the city lookup may fail.")
+
     while True:
         city = input("\nEnter a city name (e.g., New York City, Los Angeles): ").strip()
         if city:
@@ -87,49 +94,59 @@ async def run_weather_request(action_type, location_data):
     try:
         if action_type == "alerts":
             state = location_data
-            print(f"\n🌩️  Getting weather alerts for {state}...")
+            print(f"\n🌩️ Getting weather alerts for {state}...")
             print("-" * 40)
             result = await get_alerts(state)
             print(result)
-            
+
         elif action_type == "forecast":
             latitude, longitude = location_data
-            print(f"\n🌤️  Getting weather forecast for coordinates ({latitude}, {longitude})...")
+            print(f"\n🌤️ Getting weather forecast for coordinates ({latitude}, {longitude})...")
             print("-" * 60)
             result = await get_forecast(latitude, longitude)
             print(result)
-            
+
         elif action_type == "forecast_by_city":
             city = location_data
             print(f"\n🌍 Converting city '{city}' to coordinates using OpenRouter API...")
             coordinates = await get_coordinates_from_city(city)
-            
+
             if coordinates:
                 latitude, longitude = coordinates
                 print(f"📍 Coordinates found: ({latitude}, {longitude})")
-                print(f"\n🌤️  Getting weather forecast for {city}...")
+                print(f"\n🌤️ Getting weather forecast for {city}...")
                 print("-" * 60)
                 result = await get_forecast(latitude, longitude)
                 print(result)
             else:
                 print(f"❌ Could not find coordinates for '{city}'. Please try again with a different city name or use coordinates directly.")
-            
+
     except Exception as e:
         print(f"❌ Error: {e}")
         print("Please check your input and try again.")
 
-
 async def main():
     """Main interactive loop."""
+    # Check environment
+    print("Welcome to the Interactive Weather Tool!")
+    print("This tool allows you to get weather alerts and forecasts.")
+
+    # Check if OpenRouter API key is set
+    if os.environ.get("OPENROUTER_API_KEY"):
+        print("✅ OpenRouter API key found - city search functionality available")
+    else:
+        print("⚠️ OpenRouter API key not found - city search may not work")
+        print("   Add OPENROUTER_API_KEY to your .env file for full functionality")
+
     while True:
         action_type, location_data = get_user_input()
-        
+
         if action_type == "exit":
             print("\n👋 Thanks for using the weather tool! Goodbye!")
             break
-            
+
         await run_weather_request(action_type, location_data)
-        
+
         # Ask if user wants to continue
         while True:
             continue_choice = input("\n\nWould you like to check another location? (y/n): ").strip().lower()
@@ -142,8 +159,6 @@ async def main():
                 print("Please enter 'y' for yes or 'n' for no.")
 
 if __name__ == "__main__":
-    print("Welcome to the Interactive Weather Tool!")
-    print("This tool allows you to get weather alerts and forecasts.")
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
