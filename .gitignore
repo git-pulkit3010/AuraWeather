@@ -1,17 +1,31 @@
-.venv/
-.python-version
-uv.lock
+# Python
 __pycache__/
-.pytest_cache/
-.mypy_cache/
-.coverage
-.tox/
-.eggs/
-dist/
-build/
-*.egg-info/
-.env
-</import>
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
 venv/
-setup.sh
+ENV/
+.venv/
+
+# Environment variables
+.env
+
+# Logs
+*.log
 logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Cache
+*.cache
+.pytest_cache/
