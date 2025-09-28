@@ -1,8 +1,18 @@
 from typing import Any
 import httpx
 import sys
+import os
+import json
 from mcp.server.fastmcp import FastMCP
 import sys
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, continue without loading .env
+    pass
 
 # Initialize FastMCP server
 mcp = FastMCP("weather")
@@ -10,6 +20,84 @@ mcp = FastMCP("weather")
 # Constants
 NWS_API_BASE = "https://api.weather.gov"
 USER_AGENT = "weather-app/1.0"
+
+# Environment variables for OpenRouter API
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+OPENROUTER_MODEL = os.environ.get("OPENROUTER_MODEL", "openai/gpt-oss-20b:free")
+
+
+async def get_coordinates_from_city(city: str) -> tuple[float, float] | None:
+    """
+    Get latitude and longitude coordinates for a given city name using OpenRouter API.
+    
+    Args:
+        city: City name (e.g., "New York City", "Los Angeles")
+        
+    Returns:
+        Tuple of (latitude, longitude) if successful, None if failed
+    """
+    if not OPENROUTER_API_KEY:
+        print("Error: OPENROUTER_API_KEY environment variable not set", file=sys.stderr)
+        return None
+    
+    # Prepare the prompt to extract coordinates from the city name
+    prompt = f"""
+    You are a geography expert. Given a city name, respond with the latitude and longitude coordinates in JSON format.
+    City: {city}
+    
+    Respond with a JSON object in the format: {{"latitude": float, "longitude": float}}
+    If you cannot determine the coordinates for the given location, respond with {{"latitude": null, "longitude": null}}
+    """
+    
+    headers = {
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://github.com/weather-server",
+        "X-Title": "Weather Server"
+    }
+    
+    data = {
+        "model": OPENROUTER_MODEL,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.1,
+        "max_tokens": 200
+    }
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=data,
+                timeout=30.0
+            )
+            response.raise_for_status()
+            
+            response_data = response.json()
+            content = response_data["choices"][0]["message"]["content"]
+            
+            # Extract JSON from the response
+            # Look for JSON between curly braces
+            import re
+            json_match = re.search(r'\{.*\}', content, re.DOTALL)
+            if json_match:
+                json_str = json_match.group(0)
+                coords_data = json.loads(json_str)
+                
+                if coords_data.get("latitude") is not None and coords_data.get("longitude") is not None:
+                    latitude = float(coords_data["latitude"])
+                    longitude = float(coords_data["longitude"])
+                    
+                    # Validate coordinates are within valid ranges
+                    if -90 <= latitude <= 90 and -180 <= longitude <= 180:
+                        return latitude, longitude
+            
+            return None
+    except Exception as e:
+        print(f"Error getting coordinates from OpenRouter API: {e}", file=sys.stderr)
+        return None
 
 async def make_nws_request(url: str) -> dict[str, Any] | None:
     """Make a request to the NWS API with proper error handling."""

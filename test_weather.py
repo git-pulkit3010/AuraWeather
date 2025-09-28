@@ -6,7 +6,16 @@ This will test the weather functions with user-provided locations.
 
 import asyncio
 import sys
-from weather import get_alerts, get_forecast
+
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # If python-dotenv is not installed, continue without loading .env
+    pass
+
+from weather import get_alerts, get_forecast, get_coordinates_from_city
 
 def get_user_input():
     """Get location input from the user."""
@@ -18,18 +27,21 @@ def get_user_input():
         print("\nWhat would you like to do?")
         print("1. Get weather alerts for a US state")
         print("2. Get weather forecast for a location (coordinates)")
-        print("3. Exit")
+        print("3. Get weather forecast for a city")
+        print("4. Exit")
         
-        choice = input("\nEnter your choice (1-3): ").strip()
+        choice = input("\nEnter your choice (1-4): ").strip()
         
         if choice == "1":
             return "alerts", get_state_input()
         elif choice == "2":
             return "forecast", get_coordinates_input()
         elif choice == "3":
+            return "forecast_by_city", get_city_input()
+        elif choice == "4":
             return "exit", None
         else:
-            print("Invalid choice. Please enter 1, 2, or 3.")
+            print("Invalid choice. Please enter 1, 2, 3, or 4.")
 
 def get_state_input():
     """Get US state code from user."""
@@ -61,6 +73,15 @@ def get_coordinates_input():
         except ValueError:
             print("Please enter valid numeric coordinates.")
 
+def get_city_input():
+    """Get city name from user."""
+    while True:
+        city = input("\nEnter a city name (e.g., New York City, Los Angeles): ").strip()
+        if city:
+            return city
+        else:
+            print("Please enter a valid city name.")
+
 async def run_weather_request(action_type, location_data):
     """Execute the weather request based on user input."""
     try:
@@ -78,9 +99,25 @@ async def run_weather_request(action_type, location_data):
             result = await get_forecast(latitude, longitude)
             print(result)
             
+        elif action_type == "forecast_by_city":
+            city = location_data
+            print(f"\n🌍 Converting city '{city}' to coordinates using OpenRouter API...")
+            coordinates = await get_coordinates_from_city(city)
+            
+            if coordinates:
+                latitude, longitude = coordinates
+                print(f"📍 Coordinates found: ({latitude}, {longitude})")
+                print(f"\n🌤️  Getting weather forecast for {city}...")
+                print("-" * 60)
+                result = await get_forecast(latitude, longitude)
+                print(result)
+            else:
+                print(f"❌ Could not find coordinates for '{city}'. Please try again with a different city name or use coordinates directly.")
+            
     except Exception as e:
         print(f"❌ Error: {e}")
         print("Please check your input and try again.")
+
 
 async def main():
     """Main interactive loop."""
